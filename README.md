@@ -12,4 +12,7 @@ Son discos i/o particions gestionades de tal manera que podem agrupar-les per au
     Agafa el disc /dev/vda i el marca com a volum físic per a la gestió de **LVMs**.  
   **pvs**  
     Llista els volums físics creats.  
- **VG** *(Volume Group)*
+ **VG** *(Volume Group)*:  
+  Crea grups per poder gestionar els volums lògics que pertanyin al grup corresponent. D'aquesta manera es poden organitzar d'una manera més eficient.  
+  **vgcreate multimedia**  
+  Crea un grup lògic anomenat *multimedia*
