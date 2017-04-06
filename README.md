@@ -51,7 +51,9 @@ LV     VG         Attr       LSize   Pool Origin Data%  Meta%  Move Log Cpy%Sync
   musica multimedia -wi-a----- 100.00m
 ```
 Veiem el volum lògic *musica* que forma part del grup *multimedia*.  
-Ara nomès ens cal donar un sistema d'arxius als volums lògics per tal de poder emmagatzemar informació:  
+
+#### Entorn de pràtiques
+Seguint la mecànica dels exemples anteriors, ens cal donar un sistema d'arxius al volum lògic per tal de poder emmagatzemar informació:  
 **mkfs.ext4 /dev/multimedia/musica**  
 ```
 [root@localhost ~]# mkfs.ext4 /dev/multimedia/musica  
@@ -84,3 +86,44 @@ tmpfs                          100M   28K  100M   1% /run/user/42
 tmpfs                          100M  4.6M   95M   5% /run/user/1000
 /dev/mapper/multimedia-musica   93M  1.6M   85M   2% /mnt
 ```
+Veiem, a la última linia, que s'ha montat correctament.  
+* **NOTA:** La tasca demana que el **VG** es digui **practica1** i, com que no es diu així, hem disposo a cambiarli el nom:  
+**vgrename multimedia practica1**  
+```
+vda                 252:0    0 204.8M  0 disk 
+└─multimedia-musica 253:2    0   100M  0 lvm  /mnt
+[root@localhost ~]# vgrename multimedia practica1
+  Volume group "multimedia" successfully renamed to "practica1"
+```
+```
+vda                252:0    0 204.8M  0 disk 
+└─practica1-musica 253:2    0   100M  0 lvm  /mnt
+```
+El mateix m'ha passat amb el volum lògic:  
+**lvrename practica1 musica dades**  
+```
+vda                252:0    0 204.8M  0 disk 
+└─practica1-musica 253:2    0   100M  0 lvm  /mnt
+[root@localhost ~]# lvrename practica1 musica dades
+  Renamed "musica" to "dades" in volume group "practica1"
+```
+```
+vda               252:0    0 204.8M  0 disk 
+└─practica1-dades 253:2    0   100M  0 lvm  /mnt
+```
+* El volum lògic **dades** ha de ocupar tot el grup lògic. Hem disposo a expandir el volum lògic al màxim disponible, **200M**:  
+**lventend -l +100%FREE /dev/practica1/dades**  
+```
+[root@localhost ~]# lvextend -l +100%FREE /dev/practica1/dades
+  Size of logical volume practica1/dades changed from 100.00 MiB (25 extents) to 200.00 MiB (50 extents).
+  Logical volume practica1/dades successfully resized.
+```
+```
+vda               252:0    0 204.8M  0 disk 
+└─practica1-dades 253:2    0   200M  0 lvm  /mnt
+```
+* El sistema d'arxius del volum lògic ha de ser **xfs**. Hem disposo ha cambiar-li el sistema d'arxius.  
+* Primer haig de desmontar **/mnt:**  
+**umount /mnt**  
+* Ja que ja existeix un sistema d'arxius, s'ha de forçar amb **-f**:  
+**mkfs.xfs -f /dev/practica1/dades**  
